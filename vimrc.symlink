@@ -1,13 +1,17 @@
 set nocompatible
 filetype plugin indent on
 
+set noswapfile
 set hlsearch
 set rnu
+
 set nu
 set hidden
 set scrolloff=5
+
 set smartcase
 set incsearch
+set backspace=indent,eol,start
 
 syntax on
 set expandtab
@@ -15,31 +19,34 @@ set tabstop=4
 set shiftwidth=4
 
 let mapleader=" "
-noremap \ ,
 noremap <Leader>n :NERDTreeToggle<CR>
 
 ""disable the  arrow keys
-noremap <Up> <Nop>
-noremap <Down> <Nop>
-noremap <Left> <Nop>
-noremap <Right> <Nop>
+" noremap <Up> <Nop>
+" noremap <Down> <Nop>
+" noremap <Left> <Nop>
+" noremap <Right> <Nop>
 
-""clear search highlighting
-nnoremap <CR> :noh<CR><CR>
 
+autocmd FileType java call s:ConfigureEclimJavaBindings()
+
+function s:ConfigureEclimJavaBindings()
+    nnoremap <silent> <buffer><leader>i :JavaImport<CR>
+    nnoremap <silent> <buffer><leader>d :JavaDocSearch -x declarations<CR>
+    nnoremap <silent> <buffer><CR> :JavaSearchContext<CR>
+    nnoremap <silent> <buffer><leader>jgs :JavaGetSet<CR>
+    nnoremap <silent> <buffer><leader>ju :JUnit<CR>
+endfunction
+
+let g:UltiSnipsExpandTrigger="<C-e>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 function s:PluginsMissing()
-    " The g:plugs map maps the plugin name to the settings for it.
-    " The most relevant setting for this is the 'dir' setting which is the
-    " destination folder.
-    " Example (truncated) output of ':echo g:plugs':
-    " {'vim-surround': {'uri': 'https://github.com/tpope/vim-surround.git', 'dir': '/home/matthew/.vim/plugged/vim-surround/', 'frozen': 0, 'branch': 'master'},...
-
     for spec in values(g:plugs)
         if !isdirectory(spec.dir)
             return 1
         endif
     endfor
-
     return 0
 endfunction
 
@@ -54,6 +61,9 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
 Plug 'kien/ctrlp.vim'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'https://github.com/SirVer/ultisnips.git' 
+Plug 'https://github.com/honza/vim-snippets.git'
 
 if s:PluginsMissing()
     PlugInstall
